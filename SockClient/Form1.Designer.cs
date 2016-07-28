@@ -192,7 +192,7 @@
             this.txbIP.Name = "txbIP";
             this.txbIP.Size = new System.Drawing.Size(100, 21);
             this.txbIP.TabIndex = 1;
-            this.txbIP.Text = "10.6.103.40";
+            this.txbIP.Text = "10.6.103.183";
             // 
             // Form1
             // 

@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -49,7 +50,8 @@ namespace SockClient
                 sockClient.Receive(arrMsgRec);
                
                 MyMessage mmsg = new MyMessage ();
-                mmsg = (MyMessage)ByteConvertHelper.DeserializeObject(arrMsgRec);
+                mmsg= JsonHelper.DeserializeJsonToObject<MyMessage>(Encoding.UTF8.GetString(arrMsgRec));
+             
                 // 将接受到的数据存入到输入  arrMsgRec中；  
                 if(mmsg==null)
                 {
@@ -69,7 +71,10 @@ namespace SockClient
                 //        SaveFileDialog sfd = new SaveFileDialog();
 
                 //        if (sfd.ShowDialog(this) == System.Windows.Forms.DialogResult.OK)
-                //        {// 在上边的 sfd.ShowDialog（） 的括号里边一定要加上 this 否则就不会弹出 另存为 的对话框，而弹出的是本类的其他窗口，，这个一定要注意！！！【解释：加了this的sfd.ShowDialog(this)，“另存为”窗口的指针才能被SaveFileDialog的对象调用，若不加thisSaveFileDialog 的对象调用的是本类的其他窗口了，当然不弹出“另存为”窗口。】  
+                //        {// 在上边的 sfd.ShowDialog（） 的括号里边一定要加上 this 否则就不会弹出 另存为 的对话框，而弹出的是本类的其他窗口，，
+                //           这个一定要注意！！！【解释：加了this的sfd.ShowDialog(this)，“另存为”窗口的指针才能被SaveFileDialog的对象调用，
+                //            若不加thisSaveFileDialog 的对象调用的是本类的其他窗口了，当然不弹出“另存为”窗口。】  
+
 
                 //            string fileSavePath = sfd.FileName;// 获得文件保存的路径；  
                 //            // 创建文件流，然后根据路径创建文件；  
@@ -90,11 +95,11 @@ namespace SockClient
         public void SendMsg(object sender,string msg)
         {
             string strMsg = Dns.GetHostName()+ "" + "   -->" + msg ;
-            byte[] arrMsg = System.Text.Encoding.UTF8.GetBytes(msg);
-            byte[] arrSendMsg = new byte[arrMsg.Length + 1];
-            arrSendMsg[0] = 0; // 用来表示发送的是消息数据  
-            Buffer.BlockCopy(arrMsg, 0, arrSendMsg, 1, arrMsg.Length);
-            sockClient.Send(arrSendMsg); // 发送消息；             
+            MyMessage my = new MyMessage();
+            my.id = "0";
+            my.msg = msg;
+            byte[] arrMsg = Encoding.UTF8.GetBytes(JsonHelper.ToJson(my));          
+            sockClient.Send(arrMsg); // 发送消息；             
             md.DoShowMSGFunc(sender, strMsg);          
         }  
   
